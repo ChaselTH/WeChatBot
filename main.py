@@ -295,9 +295,13 @@ def gen_reply(msg: str, root: Optional[ET.Element] = None, title: Optional[str] 
 
 
 def send_and_click(text: str):
-    x, y = CONFIG['CHAT_ENTRY']
-    tap(x, y)
-    time.sleep(1)
+    entry = CONFIG.get('CHAT_ENTRY')
+    if entry is None:
+        print("无需点击聊天入口")
+    else:
+        x, y = entry
+        tap(x, y)
+        time.sleep(1)
     send_text(text)
     time.sleep(0.5)
     sx, sy = CONFIG["SEND_BTN"]
