@@ -184,8 +184,8 @@ def screen_width(items: List[Tuple[int, int, int, int, str]]) -> int:
     return max((x2 for (_, _, x2, _, _) in items), default=0)
 
 
-def last_incoming_message(root: ET.Element) -> Optional[str]:
-    """左侧气泡（x1 < 屏宽/2）≈ 对方消息；返回最后一条文本"""
+def last_incoming_message(root: ET.Element) -> Optional[List[str]]:
+    """左侧气泡（x1 < 屏宽/2）≈ 对方消息；返回消息列表"""
     items = extract_text_nodes(root)
     if not items:
         return None
