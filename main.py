@@ -245,9 +245,10 @@ def gpt_reply(msg: str) -> str:
         return "GPT调用失败，请稍后再试~"
 
 
-def gen_reply(msg: str) -> Optional[str]:
+def gen_reply(msg: str, root: Optional[ET.Element] = None, title: Optional[str] = None) -> Optional[str]:
     try:
-        title = current_chat_title(dump_ui())
+        if title is None and root is not None:
+            title = current_chat_title(root)
         s = msg.strip()
         mentions = CONFIG.get('MENTIONS') or []
         if any(m in s for m in mentions):
@@ -338,7 +339,7 @@ def main_loop():
             h = hash((title, lastmsg))
             if h != last_hash:
                 print(f"[MSG] @{title or '?'}: {lastmsg}")
-                reply = gen_reply(lastmsg)
+                reply = gen_reply(lastmsg, root=root, title=title)
                 if reply:
                     send_and_click("以下内容为GPT自动回复：\n"+reply)
                     print(f"[SEND] {reply}")
