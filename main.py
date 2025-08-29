@@ -44,6 +44,8 @@ CONFIG = {
 
 inChat = False
 
+_openai_client: Optional[OpenAI] = None
+
 # ========================================================
 def load_config(path: str = "config.ini"):
     if not os.path.exists(path):
@@ -215,13 +217,12 @@ def current_chat_title(root: ET.Element) -> Optional[str]:
     return cands[0][1] if cands else None
 
 
-# -------------------- 业务策略与发送 --------------------
-def gpt_reply(msg: str) -> str:
-    try:
+def get_openai_client() -> OpenAI:
+    global _openai_client
+    if _openai_client is None:
         base_url = CONFIG['OPENAI_BASE_URL']
         api_key = CONFIG['OPENAI_API_KEY']
-        default_token = CONFIG['DEFAULT_TOKEN']
-        client = OpenAI(
+        _openai_client = OpenAI(
             base_url=base_url,
             api_key=api_key,
             http_client=httpx.Client(
@@ -229,6 +230,14 @@ def gpt_reply(msg: str) -> str:
                 follow_redirects=True,
             ),
         )
+    return _openai_client
+
+
+# -------------------- 业务策略与发送 --------------------
+def gpt_reply(msg: str) -> str:
+    try:
+        client = get_openai_client()
+        default_token = CONFIG['DEFAULT_TOKEN']
         payload = [
                        {"role": "system", "content": default_token},
                        {"role": "user", "content": msg}
