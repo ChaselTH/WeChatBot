@@ -310,12 +310,12 @@ def main_loop():
     set_adb_keyboard()
     time.sleep(0.5)
     last_hash = None
+    count = 0
 
     # 可选：确保进入会话
     # enter_top_chat()
 
     while True:
-        count = 0
         root = dump_ui()
         if root is None:
             time.sleep(CONFIG["POLL_INTERVAL"])
@@ -346,11 +346,12 @@ def main_loop():
                     # tap(95, 175)
                     inChat = False
                 last_hash = h
+
+        count += 1
         if count > 10:
             tap(95, 175)
             inChat = False
             count = 0
-        count += 1
         time.sleep(CONFIG["POLL_INTERVAL"])
 
 
